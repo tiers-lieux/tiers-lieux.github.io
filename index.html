@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html ng-app="makerscience">
+<html ng-app="imagination">
 <head>
     <title>Imagination.Social</title>
     <meta http-equiv="content-type" content="text/html; charset=utf-8" />
@@ -19,6 +19,7 @@
 
     </ui-view>
 
+    <ng-include src="'/views/base/signinModal.html'" ng-show="$root.authVars.loginrequired"></ng-include>
     <!--<ng-include src="'views/base/login.html'"></ng-include>-->
     <!-- <ng-include src="'views/base/footer.html'"></ng-include> -->
 
@@ -66,14 +67,6 @@
 <script src="js/config.js"></script>
 <script src="js/utils.js"></script>
 
-<script src="js/makerscience/base/controllers.js"></script>
-<script src="js/makerscience/base/services.js"></script>
-<script src="js/makerscience/catalog/controllers.js"></script>
-<script src="js/makerscience/catalog/directives.js"></script>
-<script src="js/makerscience/catalog/services.js"></script>
-<script src="js/makerscience/profile/controllers.js"></script>
-<script src="js/makerscience/profile/services.js"></script>
-<script src="js/makerscience/map/controllers.js"></script>
 <script src="js/imagination/catalog/controllers.js"></script>
 <script src="js/commons/base/controllers.js"></script>
 <script src="js/commons/base/services.js"></script>
@@ -81,6 +74,7 @@
 <script src="js/commons/catalog/services.js"></script>
 <script src="js/commons/accounts/services.js"></script>
 <script src="js/commons/accounts/controllers.js"></script>
+<script src="js/commons/accounts/directives.js"></script>
 <script src="js/commons/graffiti/controllers.js"></script>
 <script src="js/commons/graffiti/services.js"></script>
 <script src="js/commons/ucomment/controllers.js"></script>

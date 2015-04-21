@@ -9,7 +9,7 @@
                         <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
                             <span class="sr-only">Toggle navigation</span> <span class="icon-bar"></span> <span class="icon-bar"></span> <span class="icon-bar"></span>
                         </button>
-                        <a class="navbar-brand" ui-sref="home"><img src="./img/imagination.logo.jpg" alt="Logo Imagination" /></a>
+                        <a class="navbar-brand" ui-sref="project.list"><img src="./img/imagination.logo.jpg" alt="Logo Imagination" /></a>
                     </div>
                     
                     
@@ -19,7 +19,7 @@
                             <!-- <li><a ui-sref="home" ng-class="{ selected: $state.includes('home') }">Accueil</a></li> -->
                             <li><a ui-sref="about" ng-class="{ selected: $state.includes('about') }">A propos</a></li>
                             <li><a ui-sref="profile.list" ng-class="{ selected: $state.includes('profile.list') }">Membres</a></li>
-                            <li><a ui-sref="map" ng-class="{ selected: $state.includes('map') }">Cartographie</a></li>
+                            <!-- <li><a ui-sref="map" ng-class="{ selected: $state.includes('map') }">Cartographie</a></li> -->
                             <li><a ui-sref="project.list" ng-class="{ selected: $state.includes('project.list') }">Projets</a></li>
                             <!-- <li><a ui-sref="forum" ng-class="{ selected: $state.includes('forum') }">Discussions</a></li> -->
                         </ul>
@@ -30,7 +30,7 @@
                         -->
                         <p class="register-login" ng-show="!authVars.isAuthenticated">
                             <button class="button" ng-click="openSignupPopup()">S'inscrire</button>
-                            <button class="button" ng-click="openSigninPopup()">Se connecter</button>
+                            <button class="button" ng-click="forceLogin()">Se connecter</button>
                         </p>
                         <div class="dropdown dropdown-logged-in" ng-show="authVars.isAuthenticated">
                             <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-expanded="true">
@@ -56,12 +56,13 @@
         </nav><!-- #menu -->
     </header>
 
+    <!-- CRUMBS  -->
     <div class="crumbs" ng-hide="$state.includes('home')">
         <div class="container">
             <div ncy-breadcrumb></div>
-        </div><!-- .container -->
-    </div><!-- .crumbs -->
-
+        </div>
+    </div>
+   
 </div><!-- #header -->
 
 <!-- DEBUG #FIXME -->
