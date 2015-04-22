@@ -1,0 +1,230 @@
+// Module 
+.container {
+	width : initial;
+}
+
+.is-pp-module {
+
+	background-color: $module-bkg-color;
+	overflow: hidden;
+
+	img {
+		max-width: 100%;
+	}
+
+	.module-main-menu {
+
+		float: left;
+
+		li{
+			float : left;
+		}		
+	}
+
+	.module-view-menu {
+		float: right;
+
+		li{
+			float : left;
+		}
+	}
+
+	.module-bar-button {
+		width : $unit;
+		height : $unit;
+		line-height: $unit;
+		text-align: center;
+	}
+
+	.module-header {
+
+		background-color: $module-header-bkg-color;
+		font-family : $module-header-font;
+		color : $module-header-color ;
+		overflow: hidden;
+
+		.module-main-menu {
+			background-color: $module-icon-bkg-color;
+			a {
+				color : $module-icon-color;
+			}
+		}
+
+		.module-view-menu {
+			
+			.module-bar-button {
+				background-color: $module-views-icon-bkg-color;
+				a {
+					color : $module-views-icon-color;					
+				}
+			}
+
+			.module-bar-button:hover {
+				background-color: $module-views-icon-hover-bkg-color;
+				a {
+					color : $module-views-icon-hover-color;
+				}
+			}
+
+			.module-bar-button.active {
+				background-color: $module-views-icon-active-bkg-color;
+				a { 
+					color : $module-views-icon-active-color;
+				}
+			}
+
+		}
+
+		.module-title,
+		.module-title a ,
+		.module-title a:hover,
+		.module-title a:active {
+			float: left;
+			background-color: $module-header-bkg-color;
+			font-family : $module-header-font;
+			font-size : 1.2rem;
+			color : $module-header-color ;
+			line-height : $unit;
+			text-transform: uppercase;
+			padding-left : 0.5rem;
+		}
+	}
+	
+
+	.module-main {
+
+		overflow: hidden;
+		background-color: $module-main-bkg-color;
+
+		.module-content {
+			padding-left : $unit;
+		}
+
+		.module-entry-thumbnail {
+			width: 15%;
+			min-width: 120px;
+			float: left;
+			display: block;
+
+			a {
+				display: block;
+				width: 100%;
+				position: relative;
+				height: 0;
+				padding: 90% 0 0 0;
+				overflow: hidden;	
+				background-size: cover;
+				background-position: top right;
+			}
+		}
+
+		.module-entry-content {
+			float: left;
+			padding-left : 1.5rem;
+
+			.module-entry-title {
+				color : $module-main-heading-font-color;
+				font-size: $module-main-heading-font-size;
+			}
+
+			.module-entry-description {
+				color : $module-main-content-font-color;
+				font-size: $module-main-content-font-size;
+			}
+		
+		}
+
+		
+		.module-details-link {
+			float: right;
+			padding : 2rem;
+			color : $module-main-content-font-color;;
+		}
+
+		.module-content article{
+			  clear: both;
+			  padding-top: 1rem;
+			  padding-bottom: 1rem;
+			  overflow: hidden;
+		}
+		.module-content article:hover {
+			background-color: $primary-color;
+		}
+
+	}
+
+	.module-aside {
+
+		overflow: hidden;
+		background-color: $module-aside-bkg-color;
+		
+		.module-filters {
+		float: left;
+		li {
+			float: left;
+		}
+	}
+
+		.module-about {
+			float: right;
+			li {
+				float: left;
+			}
+		}
+	}
+
+	
+
+	.module-search-form {
+		display: none;
+		input {
+			margin : 0.4rem;
+			width : 97%;
+			padding : 0.4rem;
+		}
+	}
+
+
+
+}
+
+@media screen and (min-width: 768px) {
+	.is-pp-module {
+		.module-main {
+			clear: both;
+			.module-content {
+				float: left;
+				width : 66%;
+			}
+
+			.module-aside {
+				float: left;
+				width : 34%;			
+			}
+		}	
+
+		.module-aside {
+			.module-filters,
+			.module-about {
+				float: none;
+				li {
+					float: none;
+					.module-bar-button {
+						float : left;
+					}
+
+					.module-bar-button-title {
+						line-height: $unit;
+					}
+
+					.module-filter {
+						padding-left: $unit;
+						color : $module-aside-filter-icon-color;
+					}
+				}
+			}
+		}
+
+	}
+		
+}

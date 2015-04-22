@@ -1,4 +1,131 @@
 
+<div class="container">
+    <div class="row">
+        <div id="content" class="listing" ng-controller="ProjectListCtrl"  ng-init="init(12)">
+            <div class="col-md-12">
+                <div class="is-pp-module">
+                    <div class="module-header">
+                        <ul class="module-main-menu">
+                            <li class="module-bar-button"><span class="glyphicon glyphicon-fire" aria-hidden="true"></span></li>
+                            <li class="module-title">
+                                <a href="#">Les projets</a>
+                            </li>
+                        </ul>
+                        
+                        <ul class="module-view-menu">
+                            <li class="module-bar-button">
+                                <a href="">
+                                    <span class="glyphicon glyphicon-list" aria-hidden="true"></span>
+                                </a>
+                            </li>
+                            <li class="module-bar-button">
+                                <a href="">
+                                    <span class="glyphicon glyphicon-th" aria-hidden="true"></span>
+                                </a>
+                            </li>
+                            <li class="module-bar-button">
+                                <a href="">
+                                    <span class="glyphicon glyphicon-map-marker" aria-hidden="true"></span>
+                                </a>
+                            </li>
+                            <li class="module-bar-button module-search">
+                                <a href="">
+                                    <span class="glyphicon glyphicon-search" aria-hidden="true"></span>
+                                </a>
+                            </li>                                                                        
+                        </ul>
+                    </div>
+                    <div class="module-main">
+                        <div class="module-content">
+                            <article ng-repeat="project in projects">
+                                {{project.begin_date|date : format : shortdate}}
+                                <div class="module-entry-thumbnail" >
+                                    <a href="#" style="background-image:url('./img/bacasable.jpg');">{{project.title}}</a>
+                                    
+                                </div>
+                                <div class="module-entry-content">
+                                    <div class="module-entry-title">
+                                        <h4>{{project.title}}</h4>
+                                    </div>
+                                    <div class="module-entry-description">
+                                        {{project.baseline}}
+                                        {{project.description}}
+                                    </div> 
+                                    <div class="module-entry-meta">
+                                        
+                                    </div>
+                                        
+                                </div>
+                                <div class="module-details-link">
+                                    <span class="glyphicon glyphicon-play-circle" aria-hidden="true"></span>
+                                </div> 
+                            </article>
+                        </div>    
+                        
+                        <div class="module-aside">
+                            <ul class="module-filters">
+                                <li class="module-search-form">
+                                    <form action="">
+                                        <input type="text">
+                                    </form>
+                                    <script>
+                                        $(document).ready(function(){
+                                            $('.is-pp-module .module-search').on("click",function(){
+                                                $('.is-pp-module .module-search-form').toggle();
+                                                $('.is-pp-module .module-search').toggleClass('active');
+                                            })
+                                        });
+                                    </script>
+                                </li>
+                                <li>
+                                    <div class="module-bar-button">
+                                        <span class="glyphicon glyphicon-tags" aria-hidden="true"></span>
+                                        
+                                    </div>
+                                    <span class="module-bar-button-title">Filtrage thématique</span>
+                                    <ul class="module-tags module-filter">
+                                        <li>tag</li>
+                                        <li>tag</li>
+                                        <li>tag</li>
+                                        <li>tag</li>
+                                    </ul>
+                                </li>
+                                <li >
+                                    <div class="module-bar-button">
+                                        <span class="glyphicon glyphicon-map-marker" aria-hidden="true"></span>
+                                    </div>
+                                    <span class="module-bar-button-title">Localisation</span>
+                                    <ul class="module-places module-filter">
+                                        <li>Lille</li>
+                                    </ul>
+                                </li>
+                            </ul>
+                            <ul class="module-about">
+                                <li >
+                                    <div class="module-bar-button">
+                                        <span class="glyphicon glyphicon-question-sign" aria-hidden="true"></span>
+                                    </div>
+                                    <span class="module-bar-button-title">A propos</span>
+                                    <ul class="module-about module-filter">
+                                        <li><a href="">Notre équipe</a></li>
+                                        <li><a href="">Biens communs</a></li>
+                                        <li><a href="">CC</a></li>
+                                    </ul>
+                                    
+                                </li>
+                            </ul>                    
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+
 <div class="row container">
 
     <div id="content" class="listing" ng-controller="ProjectListCtrl"  ng-init="init(12)">
