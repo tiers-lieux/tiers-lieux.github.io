@@ -94,10 +94,11 @@
 	.module-main {
 
 		overflow: hidden;
-		background-color: $module-main-bkg-color;
+		background-color: $module-aside-bkg-color;
 
 		.module-content {
 			padding-left : $unit;
+			background-color: $module-main-bkg-color
 		}
 
 		.module-entry-thumbnail {
@@ -124,12 +125,15 @@
 
 			.module-entry-title {
 				color : $module-main-heading-font-color;
+				font-family: $module-main-heading-font;
 				font-size: $module-main-heading-font-size;
 			}
 
 			.module-entry-description {
 				color : $module-main-content-font-color;
+				font-family: $module-main-content-font ;
 				font-size: $module-main-content-font-size;
+
 			}
 		
 		}
@@ -148,7 +152,7 @@
 			  overflow: hidden;
 		}
 		.module-content article:hover {
-			background-color: $primary-color;
+			background-color: $alternate-color;
 		}
 
 	}
@@ -156,12 +160,34 @@
 	.module-aside {
 
 		overflow: hidden;
-		background-color: $module-aside-bkg-color;
 		
 		.module-filters {
 		float: left;
+
+		.module-bar-button {
+			background-color: $module-aside-filter-icon-bkg-color;
+			a {
+				color : $module-aside-filter-icon-color;					
+			}
+		}
+
+		.module-bar-button-title {
+			display: none;
+		}
+
 		li {
 			float: left;
+		}
+
+		.module-tags {
+			li {
+				display: inline-block;
+				a {
+					background-color: $secondary-color;
+					color : $font-color ;
+					padding :  0.2rem;
+				}
+			}
 		}
 	}
 
@@ -177,6 +203,7 @@
 
 	.module-search-form {
 		display: none;
+		background-color: $module-search-form-bkg-color;
 		input {
 			margin : 0.4rem;
 			width : 97%;
@@ -215,11 +242,21 @@
 
 					.module-bar-button-title {
 						line-height: $unit;
+						width: 100%;
+						  display: block;
+						  background-color: $module-aside-filter-heading-bkg-color;
+						  padding: 0 4rem;
+						  color: $module-aside-filter-heading-font-color;
+						  font-family: $module-aside-filter-heading-font;
+						  font-size: 0.8rem;
+						  text-transform: uppercase;
+
 					}
 
 					.module-filter {
-						padding-left: $unit;
+						padding: 1rem $unit ;
 						color : $module-aside-filter-icon-color;
+						border-radius: 0.5rem;
 					}
 				}
 			}

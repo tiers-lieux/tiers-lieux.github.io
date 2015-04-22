@@ -4,7 +4,7 @@
 
 // variable
 
-$unit : 50px;
+$unit : 3rem;
 
 $heading-font : latoregular;
 $text-font : 'Merriweather';
@@ -24,7 +24,6 @@ $alternate-color-light : tint($alternate-color,40%);
 
 $font-color : white;
 $heading-font-color : white;
-
 
 // Settings
 
@@ -59,7 +58,7 @@ $module-main-content-font : $text-font;
 $module-main-content-font-size : 0.8rem;
 $module-main-content-font-color : $font-color;
 
-$module-aside-bkg-color : $primary-color-medium ;
+$module-aside-bkg-color : $primary-color-light ;
 $module-aside-color : $font-color;
 
 $module-aside-filter-icon-bkg-color : $primary-color;
