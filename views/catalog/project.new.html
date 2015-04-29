@@ -90,14 +90,6 @@
                             <h5> Vous pouvez ajouter un commentaire </h5>
                         </div>
                         <text-angular 
-                                    ng-if="item.choices.length > 0"
-                                    ng-model="item.answer"
-                                    ta-toolbar=[]
-                                    name="question_{{$index}}"
-                                    e-rows="1">
-                        </text-angular>
-                        <text-angular 
-                                    ng-if="item.choices.length == 0"
                                     ng-model="item.answer"
                                     ta-toolbar="[['bold','italics', 'underline'], ['ul', 'ol'], ['insertLink']]"
                                     name="question_{{$index}}"
