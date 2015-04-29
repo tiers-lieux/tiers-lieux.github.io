@@ -140,7 +140,7 @@
 
                         </section>
                         <!--  FIXME : questions answers / templates -->
-                        <section ng-repeat="item in projectsheet.question_answers">
+                        <section ng-repeat="item in projectsheet.question_answers" ng-show="item.answer.length > 0 || editable">
                             <h3>{{item.question.text}}</h3>
                             <div ng-if="item.question.choices.length > 0" class="choices">
                                 <form name="choiceForm" >

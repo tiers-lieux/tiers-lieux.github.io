@@ -59,7 +59,7 @@ module.controller("ImaginationProjectSheetCreateCtrl", ($scope, $state, $control
 )
 
 
-module.controller("ImaginationProjectSheetCtrl", ($rootScope, $scope, $stateParams, $controller, Project, ProjectSheet, TaggedItem, ObjectProfileLink, DataSharing) ->
+module.controller("ImaginationProjectSheetCtrl", ($rootScope, $scope, $stateParams, $controller, Project, ProjectSheet, TaggedItem, ObjectProfileLink, DataSharing, ProjectSheetTemplate, ProjectSheetQuestionAnswer) ->
     $controller('ProjectSheetCtrl', {$scope: $scope, $stateParams: $stateParams})
     $controller('TaggedItemCtrl', {$scope: $scope})
 
@@ -67,9 +67,37 @@ module.controller("ImaginationProjectSheetCtrl", ($rootScope, $scope, $statePara
     $scope.currentUserHasEditRights = false
     $scope.editable = false
 
+    $scope.isQuestionInQA = (question, question_answers) ->
+        return _.find(question_answers, (item) ->
+                return item.question.resource_uri == question.resource_uri
+        ) != undefined
+
+
     ProjectSheet.one().get({'project__slug' : $stateParams.slug}).then((ProjectSheetResult) ->
         $scope.projectsheet = ProjectSheetResult.objects[0]
+        ProjectSheetTemplate.one(getObjectIdFromURI($scope.projectsheet.template)).get().then((result)->
+            $scope.projectsheet.template = result
+            # add missing QA
+
+##  FINISH POSTING NEW QA !! ###
+            for question in $scope.projectsheet.template.questions
+                console.log(" Question ? ", question)
+                if !$scope.isQuestionInQA(question, $scope.projectsheet.question_answers)
+                    # Then we post a new q_a
+                    console.log("posting new QA !")
+                    q_a = {
+                        question: question.resource_uri
+                        answer: ''
+                        projectsheet: $scope.projectsheet.resource_uri
+                    }
+                    ProjectSheetQuestionAnswer.post(q_a).then((result)->
+                        console.log("posted new QA ", result)
+                        $scope.projectsheet.question_answers.push(result)
+                        )
+                )
         console.log(" project sheet ", $scope.projectsheet)
+        
+                
 
         # FIXME : permissions ?
         # if $rootScope.authVars.user
