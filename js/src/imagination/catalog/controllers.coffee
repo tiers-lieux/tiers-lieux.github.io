@@ -72,30 +72,28 @@ module.controller("ImaginationProjectSheetCtrl", ($rootScope, $scope, $statePara
                 return item.question.resource_uri == question.resource_uri
         ) != undefined
 
+    $scope.populateQuestions = ()->
+        for question in $scope.projectsheet.template.questions
+            console.log("Checking questions ? ", question)
+            if !$scope.isQuestionInQA(question, $scope.projectsheet.question_answers)
+                # Then we post a new q_a
+                console.log("posting new QA !")
+                q_a = {
+                    question: question.resource_uri
+                    answer: ''
+                    projectsheet: $scope.projectsheet.resource_uri
+                }
+                ProjectSheetQuestionAnswer.post(q_a).then((result)->
+                    console.log("posted new QA ", result)
+                    $scope.projectsheet.question_answers.push(result)
+                    )
 
     ProjectSheet.one().get({'project__slug' : $stateParams.slug}).then((ProjectSheetResult) ->
         $scope.projectsheet = ProjectSheetResult.objects[0]
         ProjectSheetTemplate.one(getObjectIdFromURI($scope.projectsheet.template)).get().then((result)->
             $scope.projectsheet.template = result
-            # add missing QA
-
-##  FINISH POSTING NEW QA !! ###
-            for question in $scope.projectsheet.template.questions
-                console.log(" Question ? ", question)
-                if !$scope.isQuestionInQA(question, $scope.projectsheet.question_answers)
-                    # Then we post a new q_a
-                    console.log("posting new QA !")
-                    q_a = {
-                        question: question.resource_uri
-                        answer: ''
-                        projectsheet: $scope.projectsheet.resource_uri
-                    }
-                    ProjectSheetQuestionAnswer.post(q_a).then((result)->
-                        console.log("posted new QA ", result)
-                        $scope.projectsheet.question_answers.push(result)
-                        )
-                )
-        console.log(" project sheet ", $scope.projectsheet)
+            console.log(" project sheet ready", $scope.projectsheet)
+        )
         
                 
 
