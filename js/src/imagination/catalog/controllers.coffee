@@ -67,70 +67,41 @@ module.controller("ImaginationProjectSheetCtrl", ($rootScope, $scope, $statePara
     $scope.currentUserHasEditRights = false
     $scope.editable = false
 
+    ProjectSheet.one().get({'project__slug' : $stateParams.slug}).then((ProjectSheetResult) ->
+        $scope.projectsheet = ProjectSheetResult.objects[0]
+        
+        DataSharing.sharedObject = {project: $scope.projectsheet.project}
+        angular.forEach($scope.projectsheet.project.tags, (taggedItem) ->
+            $scope.preparedTags.push({text : taggedItem.tag.name, taggedItemId : taggedItem.id})
+        )
+    )
+
+    # Methods definitions
     $scope.isQuestionInQA = (question, question_answers) ->
         return _.find(question_answers, (item) ->
                 return item.question.resource_uri == question.resource_uri
         ) != undefined
 
     $scope.populateQuestions = ()->
-        for question in $scope.projectsheet.template.questions
-            console.log("Checking questions ? ", question)
-            if !$scope.isQuestionInQA(question, $scope.projectsheet.question_answers)
-                # Then we post a new q_a
-                console.log("posting new QA !")
-                q_a = {
-                    question: question.resource_uri
-                    answer: ''
-                    projectsheet: $scope.projectsheet.resource_uri
-                }
-                ProjectSheetQuestionAnswer.post(q_a).then((result)->
-                    console.log("posted new QA ", result)
-                    $scope.projectsheet.question_answers.push(result)
-                    )
-
-    ProjectSheet.one().get({'project__slug' : $stateParams.slug}).then((ProjectSheetResult) ->
-        $scope.projectsheet = ProjectSheetResult.objects[0]
+        console.log(" Template questions ?", $scope.projectsheet)
         ProjectSheetTemplate.one(getObjectIdFromURI($scope.projectsheet.template)).get().then((result)->
             $scope.projectsheet.template = result
             console.log(" project sheet ready", $scope.projectsheet)
+            for question in $scope.projectsheet.template.questions
+                console.log("Checking questions ? ", question)
+                if !$scope.isQuestionInQA(question, $scope.projectsheet.question_answers)
+                    # Then we post a new q_a
+                    console.log("posting new QA !")
+                    q_a = {
+                        question: question.resource_uri
+                        answer: ''
+                        projectsheet: $scope.projectsheet.resource_uri
+                    }
+                    ProjectSheetQuestionAnswer.post(q_a).then((result)->
+                        console.log("posted new QA ", result)
+                        $scope.projectsheet.question_answers.push(result)
+                    )
         )
-        
-                
-
-        # FIXME : permissions ?
-        # if $rootScope.authVars.user
-        #     MakerScienceProject.one($scope.projectsheet.id).one('check', $rootScope.authVars.user.id).get().then((result)->
-        #         console.log(" Has current user edit rights ?", result.has_perm)
-        #         $scope.currentUserHasEditRights = result.has_perm
-        #         $scope.editable = result.has_perm
-
-        # )
-        
-        DataSharing.sharedObject = {project: $scope.projectsheet.project}
-        angular.forEach($scope.projectsheet.project.tags, (taggedItem) ->
-            $scope.preparedTags.push({text : taggedItem.tag.name, taggedItemId : taggedItem.id})
-        )
-
-        # FIXME : would not cost much to get similar projects 
-        # $scope.similars = []
-        # TaggedItem.one().customGET("makerscienceproject/"+$scope.projectsheet.id+"/similars").then((similarResults) ->
-        #     angular.forEach(similarResults, (similar) ->
-        #         if similar.type == 'makerscienceproject'
-        #             $scope.similars.push(MakerScienceProject.one(similar.id).get().$object)
-        #     )
-
-        # FIXME ; deal with newly added user for permissions
-        # $scope.$on('newTeamMember', (event, user_id)->
-        #         """
-        #         Give edit rights to newly added or validated team member (see commons.accounts.controllers)
-        #         """
-        #         console.log(" giving edit rights to user id = ", user_id)
-        #         MakerScienceProject.one($scope.projectsheet.id).customPOST({"user_id":user_id}, 'assign').then((result)->
-        #             console.log(" succesfully assigned edit rights ? : ", result)
-        #             )
-        #     )
-
-    )
 
     $scope.updateImaginationProjectSheet = (resourceName, resourceId, fieldName, data) ->
         putData = {}
