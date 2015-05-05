@@ -83,25 +83,25 @@ module.controller("ImaginationProjectSheetCtrl", ($rootScope, $scope, $statePara
         ) != undefined
 
     $scope.populateQuestions = ()->
-        console.log(" Template questions ?", $scope.projectsheet)
-        ProjectSheetTemplate.one(getObjectIdFromURI($scope.projectsheet.template)).get().then((result)->
-            $scope.projectsheet.template = result
-            console.log(" project sheet ready", $scope.projectsheet)
-            for question in $scope.projectsheet.template.questions
-                console.log("Checking questions ? ", question)
-                if !$scope.isQuestionInQA(question, $scope.projectsheet.question_answers)
-                    # Then we post a new q_a
-                    console.log("posting new QA !")
-                    q_a = {
-                        question: question.resource_uri
-                        answer: ''
-                        projectsheet: $scope.projectsheet.resource_uri
-                    }
-                    ProjectSheetQuestionAnswer.post(q_a).then((result)->
-                        console.log("posted new QA ", result)
-                        $scope.projectsheet.question_answers.push(result)
-                    )
-        )
+        if not $scope.projectsheet.template.questions
+            ProjectSheetTemplate.one(getObjectIdFromURI($scope.projectsheet.template)).get().then((result)->
+                $scope.projectsheet.template = result
+                console.log(" project sheet ready", $scope.projectsheet)
+                for question in $scope.projectsheet.template.questions
+                    console.log("Checking questions ? ", question)
+                    if !$scope.isQuestionInQA(question, $scope.projectsheet.question_answers)
+                        # Then we post a new q_a
+                        console.log("posting new QA !")
+                        q_a = {
+                            question: question.resource_uri
+                            answer: ''
+                            projectsheet: $scope.projectsheet.resource_uri
+                        }
+                        ProjectSheetQuestionAnswer.post(q_a).then((result)->
+                            console.log("posted new QA ", result)
+                            $scope.projectsheet.question_answers.push(result)
+                        )
+            )
 
     $scope.updateImaginationProjectSheet = (resourceName, resourceId, fieldName, data) ->
         putData = {}
