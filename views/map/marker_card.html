@@ -1,0 +1,33 @@
+<!-- <article class="leaflet-popup" ng-show="!isLoading">
+  <section class="card">
+    <header>
+      <div class="minipic">
+        <img ng-if="marker.data.picture_url" alt="{{ marker.data.title }}" ng-src="{{ MEDIA_URI }}{{ marker.data.picture_url }}" width="248" height="184">
+        <img ng-if="!marker.data.picture_url" alt="{{ marker.data.title }}" src="images/marker_nopicture.jpg" width="248" height="184">
+      </div>
+      <div class="author">
+        <img src="images/_TEMP/generic_avatar.gif" width="60px" alt="{{ marker.data.created_by.username }}" />
+        <em>{{ marker.data.created_by.username }}</em>
+      </div>
+    </header>
+    <div class="inner">
+      <a ui-sref="map.marker_detail({map: $stateParams.slug, markerId: marker.data.id})">
+	<span class="date">{{ marker.data.created_on | fromNow }}</span>
+	<h1>{{ marker.data.title }}</h1>
+	<p>
+          {{ marker.data.address }}
+	</p>
+      </a>
+    </div>
+  </section>
+</article> -->
+<article class="leaflet-popup" ng-show="!isLoading">
+    <a ui-sref="project.detail({ slug: marker.data.slug })">
+        <img ng-if="!marker.data.cover" class="background" src="./img/workshop_small.jpg" width="248" height="184" alt="Image background" />
+        <img ng-if="marker.data.cover" class="background" ng-src="{{ config.media_uri }}{{ marker.data.cover.thumbnail_url+'?width=248x184'}}" alt="Image background" />
+    </a>
+    <div class="description">
+        <h4><a ui-sref="project.detail({ slug: marker.data.slug })">{{marker.data.title}}</a></h4>
+    </div>
+    <p class="baseline"><a ui-sref="project.detail({ slug: marker.data.slug })">{{marker.data.baseline}}</a></p>
+</article>

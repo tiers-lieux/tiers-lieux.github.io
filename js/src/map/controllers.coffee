@@ -5,7 +5,10 @@ module.run(['$anchorScroll', ($anchorScroll) ->
 ])
 
 module.controller("ImaginationProjectsMapCtrl", ($scope, $anchorScroll, $location, leafletData, leafletEvents, geocoderService, Project, ProjectSheet) ->
-
+    """
+    This controller is made to be child of ProjectListCtrl where it watches for update in $scope.projectsheets list
+    Upon update, it rebuilds its marker base
+    """
     $scope.gotoAnchor = (x) ->
         newHash = 'anchor' + x
         if $location.hash() != newHash
@@ -13,14 +16,13 @@ module.controller("ImaginationProjectsMapCtrl", ($scope, $anchorScroll, $locatio
         else
             $anchorScroll()
 
-    $scope.spottedProfile = null
-    $scope.showMemberInfo = false
+    console.log("loadind map, projectsheets ?", $scope.projectsheets)
 
     angular.extend($scope,
         defaults :
             scrollWheelZoom: false # Keep the scrolling working on the page, not in the map
             maxZoom: 14
-            minZoom: 5
+            minZoom: 1
             path:
                 weight: 10
                 color: '#800000'
@@ -29,8 +31,46 @@ module.controller("ImaginationProjectsMapCtrl", ($scope, $anchorScroll, $locatio
             lat: 46.43
             lng: 2.35
             zoom: 5
-        markers : {}
+        markers : []
     )
+
+    # Watch for update in projectsheets
+    $scope.$watch(
+            ()->
+                return $scope.projectsheets
+            ,(newVal, oldVal) ->
+                if newVal != oldVal
+                    #console.log(" Updating projectsheets : new ="+newVal+" old = "+oldVal)
+                    $scope.markers = new Array()
+                    angular.forEach($scope.projectsheets, (ps)->
+                        # Either get LatLng directly, or from address_locality ?
+                        marker = 
+                        {
+                                lat: ps.project.location.geo.coordinates[1]
+                                lng: ps.project.location.geo.coordinates[0]
+                                message: '<div ng-include="\'/views/map/marker_card.html\'"></div>'
+                                data:
+                                        title: ps.project.title
+                                        baseline: ps.project.baseline
+                                        description: ps.project.description
+                                        cover: ps.cover
+                                        id: ps.project.id
+                                        slug: ps.project.slug
+
+                                icon:
+                                        type: 'awesomeMarker'
+                                        prefix: 'fa'
+                                        # icon: marker.category.icon_name
+                                        markerColor: "blue"
+                                        iconColor: "white"
+                        }
+                        console.log("adding marker : ", marker)
+                        $scope.markers.push(marker)
+                        )
+
+    )
+
+#project: Objectbaseline: "Incroyables comestibles"begin_date: nullcreated_on: "2014-12-09T00:00:00"description: ""end_date: nullid: 244location: Objectgeo: Objectcoordinates: Array[2]0: -2.9837671: 47.666491length: 2__proto__: Array[0]type: "Point"
 
     # MakerScienceProfile.getList({location__isnull : false}).then((profileResults) ->
     #     angular.forEach(profileResults, (profile) ->

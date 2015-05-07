@@ -30,14 +30,20 @@ module.controller("AbstractListCtrl", ($scope, FilterService) ->
         FilterService.filterParams.tags = []
         $scope.refreshListGeneric()
     
-        for param of FilterService.filterParams
-            $scope.$watch(
-                ()->
-                    return FilterService.filterParams[param]
-                ,(newVal, oldVal) ->
-                    if newVal != oldVal
-                        $scope.refreshListGeneric()
-            )
+        $scope.$watch(
+            ()->
+                return FilterService.filterParams.tags
+            ,(newVal, oldVal) ->
+                if newVal != oldVal
+                    $scope.refreshListGeneric()
+        )
+        $scope.$watch(
+            ()->
+                return FilterService.filterParams.query
+            ,(newVal, oldVal) ->
+                if newVal != oldVal
+                    $scope.refreshListGeneric()
+        )
 )
 
 
@@ -76,7 +82,6 @@ module.controller("FilterCtrl", ($scope, $stateParams, Tag, FilterService) ->
             tags_list.push(tag.text)
         FilterService.filterParams.tags = tags_list
         FilterService.filterParams.query = $scope.query_filter
-        console.log("AFTER refreshing filter (ctrler).. ", FilterService.filterParams)
 
     $scope.addToTagsFilter = (aTag)->
         simpleTag =
