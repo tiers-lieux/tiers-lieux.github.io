@@ -26,8 +26,10 @@
                                 </div><!-- .box -->
                             </div><!-- .boxes -->
                         </tab>
-                        <tab heading="Carte">
-                            ... coming soon
+                        <tab heading="Carte" ng-click="showMap=true">
+                            <div ng-if="showMap" class="map" ng-controller="ImaginationProjectsMapCtrl">
+                                <leaflet id="projectsmap" defaults="defaults" markers="markers" center="center" height="700px" ></leaflet>
+                            </div>
                         </tab>
                     </tabset>
                     <button ng-show="seeMore" class="button" style="float:right; margin-right:46%;" ng-click="loadMore()"> Voir plus </button>
