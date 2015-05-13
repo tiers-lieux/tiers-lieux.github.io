@@ -9,6 +9,35 @@ module.controller("ImaginationProjectsMapCtrl", ($scope, $anchorScroll, $locatio
     This controller is made to be child of ProjectListCtrl where it watches for update in $scope.projectsheets list
     Upon update, it rebuilds its marker base
     """
+    $scope.rebuildMarkers = ()->
+        #console.log(" Updating projectsheets : new ="+newVal+" old = "+oldVal)
+        $scope.markers = new Array()
+        angular.forEach($scope.projectsheets, (ps)->
+            # Either get LatLng directly, or from address_locality ?
+            marker = 
+            {
+                lat: ps.project.location.geo.coordinates[1]
+                lng: ps.project.location.geo.coordinates[0]
+                message: '<div ng-include="\'/views/map/marker_card.html\'"></div>'
+                data:
+                        title: ps.project.title
+                        baseline: ps.project.baseline
+                        description: ps.project.description
+                        cover: ps.cover
+                        id: ps.project.id
+                        slug: ps.project.slug
+
+                icon:
+                        type: 'awesomeMarker'
+                        prefix: 'fa'
+                        # icon: marker.category.icon_name
+                        markerColor: "blue"
+                        iconColor: "white"
+            }
+            console.log("adding marker : ", marker)
+            $scope.markers.push(marker)
+            )
+
     $scope.gotoAnchor = (x) ->
         newHash = 'anchor' + x
         if $location.hash() != newHash
@@ -33,40 +62,14 @@ module.controller("ImaginationProjectsMapCtrl", ($scope, $anchorScroll, $locatio
             zoom: 5
         markers : []
     )
-
+    $scope.rebuildMarkers()
     # Watch for update in projectsheets
     $scope.$watch(
             ()->
                 return $scope.projectsheets
             ,(newVal, oldVal) ->
                 if newVal != oldVal
-                    #console.log(" Updating projectsheets : new ="+newVal+" old = "+oldVal)
-                    $scope.markers = new Array()
-                    angular.forEach($scope.projectsheets, (ps)->
-                        # Either get LatLng directly, or from address_locality ?
-                        marker = 
-                        {
-                                lat: ps.project.location.geo.coordinates[1]
-                                lng: ps.project.location.geo.coordinates[0]
-                                message: '<div ng-include="\'/views/map/marker_card.html\'"></div>'
-                                data:
-                                        title: ps.project.title
-                                        baseline: ps.project.baseline
-                                        description: ps.project.description
-                                        cover: ps.cover
-                                        id: ps.project.id
-                                        slug: ps.project.slug
-
-                                icon:
-                                        type: 'awesomeMarker'
-                                        prefix: 'fa'
-                                        # icon: marker.category.icon_name
-                                        markerColor: "blue"
-                                        iconColor: "white"
-                        }
-                        console.log("adding marker : ", marker)
-                        $scope.markers.push(marker)
-                        )
+                    $scope.rebuildMarkers()   
 
     )
 
