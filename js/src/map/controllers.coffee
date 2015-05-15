@@ -61,18 +61,13 @@ module.controller("ImaginationProjectsMapCtrl", ($scope, $compile, $anchorScroll
             zoom: 5
         markers : []
     )
+    # loading time, build markers list
     $scope.rebuildMarkers()
-    console.log("rebuilt markers", $scope.markers)  
-    # Watch for update in projectsheets
-    $scope.$watch(
-            ()->
-                return $scope.projectsheets
-            ,(newVal, oldVal) ->
-                if newVal != oldVal
-                    $scope.rebuildMarkers() 
-                    console.log("rebuilt markers", $scope.markers)  
-
-    )
+    
+    # Watch for update in projectsheets list
+    $scope.$on('projectListRefreshed', (event)->
+        $scope.rebuildMarkers() 
+        )
 
     # Catch popup opening, format template with current data and open popup
     $scope.$on('leafletDirectiveMarker.popupopen', (event, leafletEvent) ->
@@ -83,15 +78,6 @@ module.controller("ImaginationProjectsMapCtrl", ($scope, $compile, $anchorScroll
             # FIXME : timeout needed to wait complete fetching of markers popup template
             $timeout(()->
                 $compile(leafletEvent.leafletEvent.popup._contentNode)(newScope)
-            ,300)
-            # console.log(" clicking marker", newScope)
+            ,100)
     )
-
-    # $scope.$on("leafletDirectiveMap.click", (event, args) ->
-    #     if $scope.spottedProfile
-    #         marker = $scope.markers[$scope.spottedProfile.id]
-    #         marker.icon = marker.icon_standard
-    #         $scope.spottedProfile = null
-    #     $scope.showMemberInfo = false
-    # )
 )

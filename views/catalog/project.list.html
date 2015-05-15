@@ -1,5 +1,5 @@
 
-
+projectsheets.length > 0
 <div class="row container">
 
     <div id="content" class="listing" ng-controller="ProjectSheetListCtrl"  ng-init="init(12)">
@@ -8,9 +8,11 @@
 
             <div class="row">
                 <div class="col-md-9">
+                    <ng-include src="'views/catalog/block/list_counter.html'" style="position:absolute;left: 50%;"></ng-include>
 
                     <tabset class="nav-tabs-listing">
                         <tab heading="Aperçu">
+
                             <div class="boxes boxes-small boxes-projects" >
                                 <div class="box" ng-repeat="projectsheet in projectsheets">
                                     <ng-include src="'views/catalog/block/project_thumb.html'" ng-init="project=projectsheet.project; cover=projectsheet.cover"></ng-include>
@@ -32,7 +34,7 @@
                             </div>
                         </tab>
                     </tabset>
-                    <button ng-show="seeMore" class="button" style="float:right; margin-right:46%;" ng-click="loadMore()"> Voir plus </button>
+                    <ng-include ng-show="projectsheets.length > 0" src="'views/catalog/block/list_counter.html'" style="position: absolute;left: 41%;bottom: 133px;"></ng-include>
                     <a ui-sref="project.new" class="large large-red">Créer un projet</a>
 
                 </div>
