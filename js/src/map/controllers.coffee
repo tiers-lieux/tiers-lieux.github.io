@@ -16,6 +16,9 @@ module.controller("ImaginationProjectsMapCtrl", ($scope, $compile, $anchorScroll
             # Either get LatLng directly, or from address_locality ?
             marker = 
             {
+                group: "center"
+                groupOption :
+                    showCoverageOnHover : false
                 lat: ps.project.location.geo.coordinates[1]
                 lng: ps.project.location.geo.coordinates[0]
                 message: '<div ng-include="\'views/map/marker_card.html\'" class= "boxes boxes-small"></div>'
@@ -48,7 +51,7 @@ module.controller("ImaginationProjectsMapCtrl", ($scope, $compile, $anchorScroll
 
     angular.extend($scope,
         defaults :
-            scrollWheelZoom: false # Keep the scrolling working on the page, not in the map
+            scrollWheelZoom: true # Keep the scrolling working on the page, not in the map
             maxZoom: 14
             minZoom: 1
             path:

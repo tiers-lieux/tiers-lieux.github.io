@@ -34,7 +34,6 @@ module.controller("ProjectSheetListCtrl", ($scope, $controller, ProjectSheet, Ba
     $scope.loadMore = ()->
         BareRestangular.all($scope.nextURL).getList().then((result)->
                 console.log("loading more !", result)
-                $scope.$broadcast('projectListRefreshed')
                 for item in result
                     $scope.projectsheets.push(item)
                 if result.metadata.next
@@ -42,6 +41,9 @@ module.controller("ProjectSheetListCtrl", ($scope, $controller, ProjectSheet, Ba
                    $scope.nextURL = result.metadata.next.slice(1) #to remove first begin slash
                 else
                     $scope.seeMore = false
+                $timeout(()->
+                    $scope.$broadcast('projectListRefreshed')
+                ,10)
             )
         
 )
