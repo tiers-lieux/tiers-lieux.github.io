@@ -10,13 +10,14 @@ module.controller("ImaginationProjectsMapCtrl", ($scope, $compile, $anchorScroll
     Upon update, it rebuilds its marker base
     """
     $scope.rebuildMarkers = ()->
-        #console.log(" Updating projectsheets : new ="+newVal+" old = "+oldVal)
+        console.log(" Updating marker")
         $scope.markers = new Array()
+        
         angular.forEach($scope.projectsheets, (ps)->
-            # Either get LatLng directly, or from address_locality ?
+            # Either get LatLng directly, or from address_locality ?                  
             marker = 
             {
-                group: "center"
+                group: $scope.cluster_group_name
                 groupOption :
                     showCoverageOnHover : false
                 lat: ps.project.location.geo.coordinates[1]
@@ -26,7 +27,7 @@ module.controller("ImaginationProjectsMapCtrl", ($scope, $compile, $anchorScroll
                         title: ps.project.title
                         baseline: ps.project.baseline
                         description: ps.project.description
-                        cover: ps.cover
+                        cover: ps.cover                                                                                                           
                         id: ps.project.id
                         slug: ps.project.slug
 
@@ -65,6 +66,9 @@ module.controller("ImaginationProjectsMapCtrl", ($scope, $compile, $anchorScroll
         markers : []
     )
     # loading time, build markers list
+    # HACK : if group already defined, then clustered markers are not redrawn, see: https://github.com/tombatossals/angular-leaflet-directive/issues/381                                                                                                                                                                                                              
+    #         => we redefine group name each time 
+    $scope.cluster_group_name = Math.random().toString(36).replace(/[^a-z]+/g, '').substr(0, 5); 
     $scope.rebuildMarkers()
     
     # Watch for update in projectsheets list
