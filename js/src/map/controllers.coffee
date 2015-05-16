@@ -12,12 +12,12 @@ module.controller("ImaginationProjectsMapCtrl", ($scope, $compile, $anchorScroll
     $scope.rebuildMarkers = ()->
         console.log(" Updating marker")
         $scope.markers = new Array()
-        
+        cluster_group_name = Math.random().toString(36).replace(/[^a-z]+/g, '').substr(0, 5);
         angular.forEach($scope.projectsheets, (ps)->
             # Either get LatLng directly, or from address_locality ?                  
             marker = 
             {
-                group: $scope.cluster_group_name
+                group: cluster_group_name
                 groupOption :
                     showCoverageOnHover : false
                 lat: ps.project.location.geo.coordinates[1]
