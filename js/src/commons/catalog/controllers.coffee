@@ -1,21 +1,35 @@
 module = angular.module("commons.catalog.controllers", ['commons.catalog.services', 'commons.base.controllers'])
 
-module.controller("ProjectSheetListCtrl", ($scope, $controller, ProjectSheet, BareRestangular) ->
+module.controller("ProjectSheetListCtrl", ($scope, $controller, ProjectSheet, BareRestangular, $timeout) ->
     angular.extend(this, $controller('AbstractListCtrl', {$scope: $scope}))
     
     $scope.seeMore = false
+    $scope.resultTotalCount = null
 
     $scope.refreshList = ()->
         ProjectSheet.one().customGETLIST('search', $scope.params).then((result)->
                 console.log(" Refreshed ! ", result)
-                $scope.projectsheets = result
+                if result.length > 0
+                    $scope.projectsheets = result
+                else 
+                    $scope.projectsheets = []
+                $scope.resultTotalCount = result.metadata.total_count
                 if result.metadata.next
                    $scope.seeMore = true
                    $scope.nextURL = result.metadata.next.slice(1) #to remove first begin slash
                 else
                     $scope.seeMore = false
+                $timeout(()->
+                    $scope.$broadcast('projectListRefreshed')
+                ,10)
                    
             )
+
+    $scope.loadAll = ()->
+    #if  $scope.resultTotalCount < 200
+        console.log(" loading all !")
+        $scope.params['limit'] = $scope.resultTotalCount
+        $scope.refreshList()
 
     $scope.loadMore = ()->
         BareRestangular.all($scope.nextURL).getList().then((result)->
@@ -27,6 +41,9 @@ module.controller("ProjectSheetListCtrl", ($scope, $controller, ProjectSheet, Ba
                    $scope.nextURL = result.metadata.next.slice(1) #to remove first begin slash
                 else
                     $scope.seeMore = false
+                $timeout(()->
+                    $scope.$broadcast('projectListRefreshed')
+                ,10)
             )
         
 )
