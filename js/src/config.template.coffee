@@ -2,6 +2,7 @@
     templateBaseUrl: '/views/',
     useHtml5Mode: false,
     projectSheetTemplateSlug: 'unisson',
+    defaultSiteTags: ['Mobilité','SEL'],  # comma-separated list of site tags
     
     # Commons-dev patapouf server
     bucket_uri: 'http://example.org/bucket/upload/',

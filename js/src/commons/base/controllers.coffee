@@ -16,6 +16,8 @@ module.controller("AbstractListCtrl", ($scope, FilterService) ->
         $scope.params['limit'] = $scope.limit
         $scope.params['q'] = FilterService.filterParams.query
         $scope.params['facet'] = FilterService.filterParams.tags
+        for tag in config.defaultSiteTags
+            $scope.params['facet'].push(tag)
 
     $scope.refreshListGeneric = ()->
         $scope.getParams()

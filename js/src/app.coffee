@@ -1,4 +1,4 @@
-angular.module('commons.base', ['commons.base.controllers', 'commons.base.services'])
+angular.module('commons.base', ['commons.base.controllers', 'commons.base.services', 'commons.base.filters'])
 angular.module('commons.catalog', ['commons.catalog.controllers', 'commons.catalog.services'])
 angular.module('commons.accounts', ['commons.accounts.services', 'commons.accounts.controllers', 'commons.account.directives'])
 angular.module('commons.ucomment', ['commons.ucomment.controllers', 'commons.ucomment.services'])
