@@ -46,7 +46,8 @@
     "angular-breadcrumb": "~0.3.3",
     "angular-truncate": "*",
     "bootstrap": "3.3.4",
-    "checklist-model":"~0.2.4"
+    "checklist-model":"~0.2.4",
+    "angular-loading-bar": "latest"
   },
   "resolutions": {
     "angular": "1.2.28"

@@ -8,7 +8,7 @@ angular.module('imagination', ['commons.catalog', 'commons.accounts', 'commons.u
                                 'imagination.catalog', 'map',
                                 'restangular', 'ui.bootstrap', 'ui.router', 'xeditable', 'checklist-model', 'textAngular', 'angularjs-gravatardirective', 'angularFileUpload',
                                 'ngSanitize', 'ngTagsInput', 'angularMoment', 'angular-unisson-auth', 'leaflet-directive', "angucomplete-alt", "videosharing-embed"
-                                'geocoder-service', 'ncy-angular-breadcrumb', 'truncate'])
+                                'geocoder-service', 'ncy-angular-breadcrumb', 'truncate', 'angular-loading-bar'])
 
 # CORS
 .config(['$httpProvider', ($httpProvider) ->
