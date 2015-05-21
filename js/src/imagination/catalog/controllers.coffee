@@ -94,7 +94,7 @@ module.controller("ImaginationProjectSheetCtrl", ($rootScope, $scope, $statePara
                     {
                         lat: $scope.project.location.geo.coordinates[1]
                         lng: $scope.project.location.geo.coordinates[0]
-                        message: address
+                        message: 'address'
                         icon:
                                 type: 'awesomeMarker'
                                 prefix: 'fa'
@@ -151,12 +151,14 @@ module.controller("ImaginationProjectSheetCtrl", ($rootScope, $scope, $statePara
 
     $scope.updateProjectAddress = (resourceId, fieldName, data)->
         # Check wether project has already an adress
-        if $scope.project.location
-            if $scope.project.location.address.id
-                # update address
-                putData = {}
-                putData[fieldName] = data
-                PostalAddress.one($scope.project.location.address.id).patch(putData)
+        if $scope.project.location && $scope.project.location.address
+            # update address
+            putData = {}
+            putData[fieldName] = data
+            PostalAddress.one($scope.project.location.address.id).patch(putData).then((data)->
+                $scope.project.location.address = data
+                console.log(" updated project location!", $scope.project)
+                )
         else
             putData = {
                 location:{
@@ -165,7 +167,10 @@ module.controller("ImaginationProjectSheetCtrl", ($rootScope, $scope, $statePara
                 }
             }
             putData.location.address[fieldName] = data
-            Project.one(resourceId).patch(putData)
+            Project.one(resourceId).patch(putData).then((data)->
+                $scope.project['location'] = data.location
+                console.log(" created project location!", $scope.project)
+                )
 
     # Load projectsheet data
     ProjectSheet.one().get({'project__slug' : $stateParams.slug}).then((ProjectSheetResult) ->

@@ -132,6 +132,10 @@
                                     {{ project.location.address.street_address || '(adresse inconnue)' }}
                                 </p>
                             </div>
+                            <div class="minimap">
+                                <leaflet id="minimap" defaults="defaults" markers="markers" center="center" 
+                                width="250px" height="150px" ></leaflet>
+                            </div>
                         </div><!-- .side-header -->
 
                     </div><!-- .col-md-4 -->
