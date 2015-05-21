@@ -14,32 +14,35 @@ module.controller("ImaginationProjectsMapCtrl", ($scope, $compile, $anchorScroll
         $scope.markers = new Array()
         cluster_group_name = Math.random().toString(36).replace(/[^a-z]+/g, '').substr(0, 5);
         angular.forEach($scope.projectsheets, (ps)->
-            # Either get LatLng directly, or from address_locality ?                  
-            marker = 
-            {
-                group: cluster_group_name
-                groupOption :
-                    showCoverageOnHover : false
-                lat: ps.project.location.geo.coordinates[1]
-                lng: ps.project.location.geo.coordinates[0]
-                message: '<div ng-include="\'views/map/marker_card.html\'" class= "boxes boxes-small"></div>'
-                data:
-                        title: ps.project.title
-                        baseline: ps.project.baseline
-                        description: ps.project.description
-                        cover: ps.cover                                                                                                           
-                        id: ps.project.id
-                        slug: ps.project.slug
+            # Either get LatLng directly, or from address_locality ? 
+            if ps.project.location
+                if ps.project.location.geo               
+                    marker = 
+                    {
+                        group: cluster_group_name
+                        groupOption :
+                            showCoverageOnHover : false
+                        lat: ps.project.location.geo.coordinates[1]
+                        lng: ps.project.location.geo.coordinates[0]
+                        message: '<div ng-include="\'views/map/marker_card.html\'" class= "boxes boxes-small"></div>'
+                        data:
+                                title: ps.project.title
+                                baseline: ps.project.baseline
+                                description: ps.project.description
+                                cover: ps.cover                                                                                                           
+                                id: ps.project.id
+                                slug: ps.project.slug
 
-                icon:
-                        type: 'awesomeMarker'
-                        prefix: 'fa'
-                        # icon: marker.category.icon_name
-                        markerColor: "blue"
-                        iconColor: "white"
-            }
-            $scope.markers.push(marker)
-            )
+                        icon:
+                                type: 'awesomeMarker'
+                                prefix: 'fa'
+                                # icon: marker.category.icon_name
+                                markerColor: "blue"
+                                iconColor: "white"
+                    }
+                    $scope.markers.push(marker)
+                # no geo coords yet, try resolving address ?
+        )
 
     $scope.gotoAnchor = (x) ->
         newHash = 'anchor' + x

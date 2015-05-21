@@ -55,8 +55,9 @@
 				margin: 0 auto;
 				text-align: center;
 				input {
-					width: 75%;
+					width: 80%;
 					text-align: center;
+                    float: left;
 				}
 			}
 		}
@@ -79,10 +80,16 @@
 		form {
 			input, button.btn {
 				margin-bottom: 0;
+                font-size: 1em;
+                margin: 5px;
 			}
 			.editable-controls, .editable-buttons {
 				line-height: 1em;
+                float: left;
 			}
+            select.editable-has-buttons {
+                max-width: 80%;
+            }
 		}
 		button.btn {
 			padding: 0.5em;

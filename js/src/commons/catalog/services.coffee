@@ -32,6 +32,10 @@ module.factory('Bucket', (Restangular) ->
     return Restangular.service('bucket/bucket')
 )
 
+module.factory('PostalAddress', (Restangular) ->
+    return Restangular.service('scout/postaladdress')
+)
+
 # Restangular service without api/v0
 module.factory('BareRestangular', (Restangular) ->
     return Restangular.withConfig((RestangularConfigurer) ->
