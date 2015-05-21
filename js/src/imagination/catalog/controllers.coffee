@@ -86,15 +86,15 @@ module.controller("ImaginationProjectSheetCtrl", ($rootScope, $scope, $statePara
             address = ''
             if $scope.project.location.address
                 if $scope.project.location.address.street_address
-                    address.push($scope.project.location.address.street_address)
+                    address+=$scope.project.location.address.street_address
                 if $scope.project.location.address.country
-                    address.push(', ')
-                    address.push($scope.project.location.address.country)
+                    address+=', '
+                    address+=$scope.project.location.address.country
             marker = 
                     {
                         lat: $scope.project.location.geo.coordinates[1]
                         lng: $scope.project.location.geo.coordinates[0]
-                        message: 'address'
+                        message: address
                         icon:
                                 type: 'awesomeMarker'
                                 prefix: 'fa'
@@ -102,10 +102,16 @@ module.controller("ImaginationProjectSheetCtrl", ($rootScope, $scope, $statePara
                                 iconColor: "white"
                     }
             $scope.markers.push(marker)
+            # centre la carte sur le marker
+            $scope.center = {
+                lat: $scope.project.location.geo.coordinates[1]
+                lng: $scope.project.location.geo.coordinates[0]
+                zoom: 3
+            }
         # no geo data yet
         else
             console.log(" no geo data ")
-        # centre la carte sur le marker
+
 
     $scope.isQuestionInQA = (question, question_answers) ->
         return _.find(question_answers, (item) ->
@@ -150,7 +156,7 @@ module.controller("ImaginationProjectSheetCtrl", ($rootScope, $scope, $statePara
             return null
 
     $scope.updateProjectAddress = (resourceId, fieldName, data)->
-        # Check wether project has already an adress
+        # Update already existing adress
         if $scope.project.location && $scope.project.location.address
             # update address
             putData = {}
@@ -158,7 +164,8 @@ module.controller("ImaginationProjectSheetCtrl", ($rootScope, $scope, $statePara
             PostalAddress.one($scope.project.location.address.id).patch(putData).then((data)->
                 $scope.project.location.address = data
                 console.log(" updated project location!", $scope.project)
-                )
+            )
+        # Update or create location data without already existing adress
         else
             putData = {
                 location:{
@@ -166,6 +173,9 @@ module.controller("ImaginationProjectSheetCtrl", ($rootScope, $scope, $statePara
                     }
                 }
             }
+            # check if already existing geo data
+            if $scope.project.location.geo
+                putData.location['geo'] = $scope.project.location.geo
             putData.location.address[fieldName] = data
             Project.one(resourceId).patch(putData).then((data)->
                 $scope.project['location'] = data.location
