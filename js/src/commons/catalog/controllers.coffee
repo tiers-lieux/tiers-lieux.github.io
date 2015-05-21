@@ -1,13 +1,51 @@
 module = angular.module("commons.catalog.controllers", ['commons.catalog.services', 'commons.base.controllers'])
 
-module.controller("ProjectListCtrl", ($scope, $controller, Project) ->
+module.controller("ProjectSheetListCtrl", ($scope, $controller, ProjectSheet, BareRestangular, $timeout) ->
     angular.extend(this, $controller('AbstractListCtrl', {$scope: $scope}))
-
-    $scope.projects = Project.getList().$object
     
+    $scope.seeMore = false
+    $scope.resultTotalCount = null
+
     $scope.refreshList = ()->
-        #$scope.projects = Project.one().customGETLIST('search', $scope.params).$object
-        $scope.projects = Project.getList().$object
+        ProjectSheet.one().customGETLIST('search', $scope.params).then((result)->
+                console.log(" Refreshed ! ", result)
+                if result.length > 0
+                    $scope.projectsheets = result
+                else 
+                    $scope.projectsheets = []
+                $scope.resultTotalCount = result.metadata.total_count
+                if result.metadata.next
+                   $scope.seeMore = true
+                   $scope.nextURL = result.metadata.next.slice(1) #to remove first begin slash
+                else
+                    $scope.seeMore = false
+                $timeout(()->
+                    $scope.$broadcast('projectListRefreshed')
+                ,10)
+                   
+            )
+
+    $scope.loadAll = ()->
+    #if  $scope.resultTotalCount < 200
+        console.log(" loading all !")
+        $scope.params['limit'] = $scope.resultTotalCount
+        $scope.refreshList()
+
+    $scope.loadMore = ()->
+        BareRestangular.all($scope.nextURL).getList().then((result)->
+                console.log("loading more !", result)
+                for item in result
+                    $scope.projectsheets.push(item)
+                if result.metadata.next
+                   $scope.seeMore = true
+                   $scope.nextURL = result.metadata.next.slice(1) #to remove first begin slash
+                else
+                    $scope.seeMore = false
+                $timeout(()->
+                    $scope.$broadcast('projectListRefreshed')
+                ,10)
+            )
+        
 )
 
 
@@ -29,7 +67,7 @@ module.controller("ProjectSheetCtrl", ($scope, $stateParams, $filter, ProjectShe
         putData[fieldName] = data
         switch resourceName
             when 'Project' then Project.one(resourceId).patch(putData)
-            when 'ProjectSheetQuestionAnswer' then ProjectSheetItem.one(resourceId).patch(putData)
+            when 'ProjectSheetQuestionAnswer' then ProjectSheetQuestionAnswer.one(resourceId).patch(putData)
             when 'ProjectSheet' then ProjectSheet.one(resourceId).patch(putData)
 
     $scope.openGallery = (projectsheet) ->
@@ -69,8 +107,10 @@ module.controller("ProjectSheetCreateCtrl", ($rootScope, $scope, ProjectSheet, P
                     questionLabel : question.text
                     question : question.resource_uri
                     answer : ""
+                    choices: question.choices
                 )
             )
+            console.log("Q_A_item", $scope.QAItems)
             $scope.projectsheet.template = template.resource_uri
         )
 
@@ -85,6 +125,7 @@ module.controller("ProjectSheetCreateCtrl", ($rootScope, $scope, ProjectSheet, P
             angular.forEach($scope.QAItems, (q_a) ->
                 q_a.projectsheet = projectsheetResult.resource_uri
                 q_a.projectsheet_id = projectsheetResult.id
+                console.log("current QA_item", q_a)
                 ProjectSheetQuestionAnswer.post(q_a)
             )
             return projectsheetResult
@@ -123,51 +164,14 @@ module.controller("ProjectSheetCreateCtrl", ($rootScope, $scope, ProjectSheet, P
         )
 )
 
-module.controller("PopularityCtrl", ($scope, $state) ->
-    $scope.votePopularity = false
-    $scope.previousUserRatings = {}
-    $scope.userRatings = {}
 
-    $scope.popularityItems =
-        'Inspirant' :
-            'maxPopularityScore' : 100
-            'objectPopularityScore' : 70
-        'Réconfortant' :
-            'maxPopularityScore' : 100
-            'objectPopularityScore' : 50
-        'Utile' :
-            'maxPopularityScore' : 100
-            'objectPopularityScore' : 15
 
-    $scope.saveUserRating = () ->
-        angular.forEach($scope.userRatings, (value, key) ->
-            if $scope.previousUserRatings[key]
-                $scope.popularityItems[key].objectPopularityScore -=  $scope.previousUserRatings[key]
-            $scope.previousUserRatings[key] = value
-            $scope.popularityItems[key].objectPopularityScore += value
-        )
-        $scope.votePopularity = false
-)
 
-module.controller("ProjectProgressCtrl", ($scope, Project, ProjectProgress) ->
-    $scope.progressRange = []
-    $scope.selectedClasses = {}
-
-    $scope.updateProgressChoice = (progressChoice) ->
-        $scope.selectedClasses = {}
-        $scope.selectedClasses[progressChoice.id] = "selected"
-
-    $scope.init = (projectID, projectProgressRangeSlug) ->
-
-        ProjectProgress.getList({'range__slug' : projectProgressRangeSlug}).then((progressRangeResult) ->
-            $scope.progressRange = progressRangeResult
-            $scope.updateProgressChoice($scope.progressRange[0])
-        )
-
-)
-
-module.controller('GalleryInstanceCtrl', ($scope, $modalInstance, @$http, params, FileUploader, ProjectSheet, BucketFile) ->
-
+module.controller('GalleryInstanceCtrl', ($scope, $rootScope, $modalInstance, @$http, params, FileUploader, ProjectSheet, BucketFile) ->
+    console.log('Init GalleryInstanceCtrl', params)
+    # First check user is authenticated since upload triggers 403 and not gracefully intercepted 401 errors 
+    if !$rootScope.authVars.isAuthenticated
+        $rootScope.forceLogin()
     if params.projectsheet
         $scope.uploader = new FileUploader(
             url: config.bucket_uri
@@ -235,5 +239,22 @@ module.controller('GalleryInstanceCtrl', ($scope, $modalInstance, @$http, params
     $scope.updateFavorite = (file) ->#EDIT MODE
         $scope.projectsheet.cover = file
         ProjectSheet.one($scope.projectsheet.id).patch({cover:file.resource_uri})
+
+)
+
+module.controller("ProjectProgressCtrl", ($scope, Project, ProjectProgress) ->
+    $scope.progressRange = []
+    $scope.selectedClasses = {}
+
+    $scope.updateProgressChoice = (progressChoice) ->
+        $scope.selectedClasses = {}
+        $scope.selectedClasses[progressChoice.id] = "selected"
+
+    $scope.init = (projectID, projectProgressRangeSlug) ->
+
+        ProjectProgress.getList({'range__slug' : projectProgressRangeSlug}).then((progressRangeResult) ->
+            $scope.progressRange = progressRangeResult
+            $scope.updateProgressChoice($scope.progressRange[0])
+        )
 
 )

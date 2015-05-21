@@ -10,7 +10,7 @@ module = angular.module("imagination.catalog.controllers", ['commons.graffiti.co
 # )
 
 
-module.controller("ImaginationProjectSheetCreateCtrl", ($scope, $state, $controller, Project, TaggedItem, Profile, ObjectProfileLink) ->
+module.controller("ImaginationProjectSheetCreateCtrl", ($scope, $state, $controller, Project, ProjectSheet, TaggedItem, Profile, ObjectProfileLink) ->
     $controller('ProjectSheetCreateCtrl', {$scope: $scope})
 
     $scope.tags = []
@@ -26,7 +26,6 @@ module.controller("ImaginationProjectSheetCreateCtrl", ($scope, $state, $control
             console.log(" Just saved project : Result from savingProject : ", projectsheetResult)
             
             # Here we assign tags to projects 
-            project_id =  
             angular.forEach($scope.tags, (tag)->
                 TaggedItem.one().customPOST({tag : tag.text}, "project/"+projectsheetResult.project.id, {})
             )
@@ -40,10 +39,10 @@ module.controller("ImaginationProjectSheetCreateCtrl", ($scope, $state, $control
                 $scope.uploader.onCompleteAll = () ->
                     $state.go("project.detail", {slug : projectsheetResult.project.slug})
             
+            # add connected user as team member of project with detail "porteur"
             # FIXME : 
             # a) check currentProfile get populated (see commons.accounts.services)
             # b) implement permissions !
-            # add connected user as team member of project with detail "porteur"
             # ObjectProfileLink.one().customPOST(
             #         profile_id: $scope.currentProfile.id,
             #         level: 0,
@@ -60,7 +59,7 @@ module.controller("ImaginationProjectSheetCreateCtrl", ($scope, $state, $control
 )
 
 
-module.controller("ImaginationProjectSheetCtrl", ($rootScope, $scope, $stateParams, $controller, Project, TaggedItem, ObjectProfileLink, DataSharing) ->
+module.controller("ImaginationProjectSheetCtrl", ($rootScope, $scope, $stateParams, $controller, Project, ProjectSheet, TaggedItem, ObjectProfileLink, DataSharing, ProjectSheetTemplate, ProjectSheetQuestionAnswer) ->
     $controller('ProjectSheetCtrl', {$scope: $scope, $stateParams: $stateParams})
     $controller('TaggedItemCtrl', {$scope: $scope})
 
@@ -68,48 +67,47 @@ module.controller("ImaginationProjectSheetCtrl", ($rootScope, $scope, $statePara
     $scope.currentUserHasEditRights = false
     $scope.editable = false
 
-    Project.one().get({'slug' : $stateParams.slug}).then((ProjectResult) ->
-        $scope.projectsheet = ProjectResult.objects[0]
-
-        # FIXME : permissions ?
-        # if $rootScope.authVars.user
-        #     MakerScienceProject.one($scope.projectsheet.id).one('check', $rootScope.authVars.user.id).get().then((result)->
-        #         console.log(" Has current user edit rights ?", result.has_perm)
-        #         $scope.currentUserHasEditRights = result.has_perm
-        #         $scope.editable = result.has_perm
-
-        # )
+    ProjectSheet.one().get({'project__slug' : $stateParams.slug}).then((ProjectSheetResult) ->
+        $scope.projectsheet = ProjectSheetResult.objects[0]
         
         DataSharing.sharedObject = {project: $scope.projectsheet.project}
-        angular.forEach($scope.projectsheet.tags, (taggedItem) ->
+        angular.forEach($scope.projectsheet.project.tags, (taggedItem) ->
             $scope.preparedTags.push({text : taggedItem.tag.name, taggedItemId : taggedItem.id})
         )
-
-        # FIXME : would not cost much to get similar projects 
-        # $scope.similars = []
-        # TaggedItem.one().customGET("makerscienceproject/"+$scope.projectsheet.id+"/similars").then((similarResults) ->
-        #     angular.forEach(similarResults, (similar) ->
-        #         if similar.type == 'makerscienceproject'
-        #             $scope.similars.push(MakerScienceProject.one(similar.id).get().$object)
-        #     )
-
-        # FIXME ; deal with newly added user for permissions
-        # $scope.$on('newTeamMember', (event, user_id)->
-        #         """
-        #         Give edit rights to newly added or validated team member (see commons.accounts.controllers)
-        #         """
-        #         console.log(" giving edit rights to user id = ", user_id)
-        #         MakerScienceProject.one($scope.projectsheet.id).customPOST({"user_id":user_id}, 'assign').then((result)->
-        #             console.log(" succesfully assigned edit rights ? : ", result)
-        #             )
-        #     )
-
     )
+
+    # Methods definitions
+    $scope.isQuestionInQA = (question, question_answers) ->
+        return _.find(question_answers, (item) ->
+                return item.question.resource_uri == question.resource_uri
+        ) != undefined
+
+    $scope.populateQuestions = ()->
+        if not $scope.projectsheet.template.questions
+            ProjectSheetTemplate.one(getObjectIdFromURI($scope.projectsheet.template)).get().then((result)->
+                $scope.projectsheet.template = result
+                console.log(" project sheet ready", $scope.projectsheet)
+                for question in $scope.projectsheet.template.questions
+                    console.log("Checking questions ? ", question)
+                    if !$scope.isQuestionInQA(question, $scope.projectsheet.question_answers)
+                        # Then we post a new q_a
+                        console.log("posting new QA !")
+                        q_a = {
+                            question: question.resource_uri
+                            answer: ''
+                            projectsheet: $scope.projectsheet.resource_uri
+                        }
+                        ProjectSheetQuestionAnswer.post(q_a).then((result)->
+                            console.log("posted new QA ", result)
+                            $scope.projectsheet.question_answers.push(result)
+                        )
+            )
 
     $scope.updateImaginationProjectSheet = (resourceName, resourceId, fieldName, data) ->
         putData = {}
         putData[fieldName] = data
         switch resourceName
             when 'Project' then Project.one(resourceId).patch(putData)
+            when 'ProjectSheet' then ProjectSheet.one(resourceId).patch(putData)
 )
 
