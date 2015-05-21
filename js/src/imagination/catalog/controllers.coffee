@@ -59,7 +59,7 @@ module.controller("ImaginationProjectSheetCreateCtrl", ($scope, $state, $control
 )
 
 
-module.controller("ImaginationProjectSheetCtrl", ($rootScope, $scope, $stateParams, $controller, Project, ProjectSheet, TaggedItem, ObjectProfileLink, DataSharing, ProjectSheetTemplate, ProjectSheetQuestionAnswer, PostalAddress, geolocation) ->
+module.controller("ImaginationProjectSheetCtrl", ($rootScope, $scope, $stateParams, $controller, $modal, Project, ProjectSheet, TaggedItem, ObjectProfileLink, DataSharing, ProjectSheetTemplate, ProjectSheetQuestionAnswer, PostalAddress, geolocation) ->
     $controller('ProjectSheetCtrl', {$scope: $scope, $stateParams: $stateParams})
     $controller('TaggedItemCtrl', {$scope: $scope})
 
@@ -81,7 +81,7 @@ module.controller("ImaginationProjectSheetCtrl", ($rootScope, $scope, $statePara
     $scope.markers = []
 
     # Methods definitions
-    $scope.geocodeLocation = ()->
+    $scope.loadGeocodedLocation = ()->
         if $scope.project.location.geo
             address = ''
             if $scope.project.location.address
@@ -112,6 +112,19 @@ module.controller("ImaginationProjectSheetCtrl", ($rootScope, $scope, $statePara
         else
             console.log(" no geo data ")
 
+    $scope.openGeocodingPopup = () ->
+        modalInstance = $modal.open(
+            templateUrl: 'views/catalog/block/geocoding.html'
+            controller: 'GeocodingInstanceCtrl'
+            size: 'lg'
+            resolve:
+                params: ->
+                    return {
+                        project : $scope.project
+                        countryData : $scope.countryData
+                        showCountry : $scope.showCountry
+                    }
+        )
 
     $scope.isQuestionInQA = (question, question_answers) ->
         return _.find(question_answers, (item) ->
@@ -192,12 +205,55 @@ module.controller("ImaginationProjectSheetCtrl", ($rootScope, $scope, $statePara
             $scope.preparedTags.push({text : taggedItem.tag.name, taggedItemId : taggedItem.id})
         )
 
-        $scope.geocodeLocation()
+        $scope.loadGeocodedLocation()
 
     )
-    
-
-    
-
 )
+
+module.controller('GeocodingInstanceCtrl', ($scope, $rootScope, $modalInstance, params, geolocation) ->
+    console.log('Init GeocodingInstanceCtrl', params)
+    $scope.project = params.project
+    $scope.countryData = params.countryData
+    $scope.showCountry = params.showCountry
+    $scope.markers = []
+    $scope.defaults = {
+            scrollWheelZoom: true # Keep the scrolling working on the page, not in the map
+            maxZoom: 14
+            minZoom: 1
+    }
+    $scope.center = {
+            lat: 46.43
+            lng: 2.35
+            zoom: 5
+    }
+
+    $scope.ok = ->
+        geo = {}
+        $modalInstance.close(geo)
+
+    $scope.cancel = ->
+        $modalInstance.dismiss('cancel')
+
+    $scope.geocode = ()->
+        lookup_address = ''
+        if $scope.project.location.address && $scope.project.location.address.street_address
+            lookup_address+=$scope.project.location.address.street_address
+        if $scope.project.location.address.country
+            lookup_address+=', '
+            lookup_address+=$scope.project.location.address.country
+        pos_promise = geolocation.lookupAddress(lookup_address).then((coords)->
+            console.log(" found position !", coords)
+            marker = 
+                    lat: coords[0]
+                    lng: coords[1]
+            $scope.markers = [marker]
+            # centre la carte sur le marker
+            $scope.center = {
+                lat: coords[0]
+                lng: coords[1]
+                zoom: 6
+            }
+        )
+)
+
 

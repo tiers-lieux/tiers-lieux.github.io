@@ -118,13 +118,6 @@
                                         <span class="glyphicon glyphicon-pencil"></span>
                                     </button>
                                 </div>
-                                <!-- <form name="addressForm" >
-                                    <label ng-repeat="choice in item.question.choices">
-                                        <input type="checkbox" checklist-model="item.selected_choices_id" checklist-value="choice.id" ng-disabled="!editable"> {{ choice.text }}
-                                    </label>
-                                    <button type="button" class="btn btn-primary" ng-show="choiceForm.$dirty"
-                                        ng-click="updateProjectSheet('ProjectSheetQuestionAnswer', item.id , 'selected_choices_id', item.selected_choices_id); choiceForm.$setPristine();">Valider les choix</button>
-                                </form> -->
                                 <p editable-text="project.location.address.street_address"
                                     e-form="AddressBtnForm"
                                     onbeforesave="updateProjectAddress(project.id, 'street_address', $data)"
@@ -133,8 +126,9 @@
                                 </p>
                             </div>
                             <div class="minimap">
+                                <button type="button" ng-click="openGeocodingPopup()" ng-show="editable">Geolocaliser le projet</button>
                                 <leaflet id="minimap" defaults="defaults" markers="markers" center="center" 
-                                width="250px" height="150px" ></leaflet>
+                                width="250px" height="150px" ng-show="!editable"></leaflet>
                             </div>
                         </div><!-- .side-header -->
 
